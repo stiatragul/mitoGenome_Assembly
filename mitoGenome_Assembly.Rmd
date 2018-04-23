@@ -5,8 +5,6 @@ date: "22 April 2018"
 output:
   pdf_document:
     toc: yes
-  html_document:
-    toc: yes
 ---
 
 ***
@@ -20,8 +18,13 @@ output:
 ***
 
 # Multiple mtGenome assembly and alignment using MITObim in R
+## Why Bother?
+As a result of the exon capture process for Anchored Hybrid Enrichment projects, we're getting a considerable amount of mitochondrial bycatch. This mtDNA can provide a lot of information about past introgression events, and give a separate phylogenetic history for the group of interest. Also, ::*free data*::. 
+
+***
+
 ## File Preparation
-We'll use the MITObim pipeline, run from R to assemble our mtGenomes against a reference. We'll then pull out the final assembly for each sample and align them against each other using MUSCLE.  
+We'll use the MITObim pipeline, run from R to assemble our mtGenomes against a reference (find one on GenBank, distantly related is OK). We'll then pull out the final assembly for each sample and align them against each other using MUSCLE.  
 Start by creating a directory to hold:  
 
 * the MITObim pipeline ('MITObim.pl')  
@@ -34,8 +37,7 @@ Here's a quick schematic of what the structure should look like:
 /PATH_TO_PARENT_DIRECTORY/mtGenomes
 |-- MITObim.pl
 |-- mira_4.0.2_darwin13.1.0_x86_64_static
-|   |-- bin
-|   |-- etc.
+|   |-- bin (et al.)
 |-- muscle3.8.31_i86darwin64
 |-- Frogs
     |-- [taxon]_mtGenome.fasta (reference genome)
