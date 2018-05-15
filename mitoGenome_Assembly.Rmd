@@ -55,10 +55,9 @@ Open a new R script, and source the functions we'll need
 ```{r eval=FALSE}
 source("/PATH_TO_CODE/mtGenome_Assembly.R")
 ```
-Then set your working directory to the directory holding MITObim.pl, MUSCLE,
-MIRA, and your project-specific directory (I've called this directory 'Frogs')
+Then set your working directory to the project-specific directory (I've called this directory 'Frogs'). This holds a subdirectory for each sample, and your reference mitogenome.
 ```{r eval=FALSE}
-setwd("/PATH_TO_DIR/Frogs")
+setwd("/PATH_TO_DIR/mtGenomes/Frogs")
 ```
 ***
 
