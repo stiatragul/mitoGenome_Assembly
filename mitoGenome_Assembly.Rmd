@@ -3,6 +3,8 @@ title: "mitoGenome Assembly"
 author: "Ian G. Brennan"
 date: "22 April 2018"
 output:
+  html_document:
+    toc: yes
   pdf_document:
     toc: yes
 ---
