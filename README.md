@@ -10,6 +10,7 @@ Or, just download the R code, and follow the directions below.
 Cheers.  
 Ian
 
+***
 
 ## Install the software
 1. MITObim[^1]: https://github.com/chrishah/MITObim
