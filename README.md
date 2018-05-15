@@ -11,20 +11,20 @@ Cheers.
 Ian
 
 
-# Install the software
+## Install the software
 1. MITObim[^1]: https://github.com/chrishah/MITObim
     +	make sure to follow install instructions, including dependecies: MIRA, PERL, etc.
 2. MUSCLE[^2]: https://www.drive5.com/muscle/
 
 ***
 
-# Multiple mtGenome assembly and alignment using MITObim in R
-## Why Bother?
+## Multiple mtGenome assembly and alignment using MITObim in R
+### Why Bother?
 As a result of the exon capture process for Anchored Hybrid Enrichment projects, we're getting a considerable amount of mitochondrial bycatch. This mtDNA can provide a lot of information about past introgression events, and give a separate phylogenetic history for the group of interest. Also, ::*free data*::. 
 
 ***
 
-## File Preparation
+### File Preparation
 We'll use the MITObim pipeline, run from R to assemble our mtGenomes against a reference (find one on GenBank, distantly related is OK). We'll then pull out the final assembly for each sample and align them against each other using MUSCLE.  
 Start by creating a directory to hold:  
 
@@ -50,7 +50,7 @@ Here's a quick schematic of what the structure should look like:
         |-- Taxon2_R2.fastq.gz
 ```
 
-## Executing the Code
+### Executing the Code
 Open a new R script, and source the functions we'll need
 ```{r eval=FALSE}
 source("/PATH_TO_CODE/mtGenome_Assembly.R")
