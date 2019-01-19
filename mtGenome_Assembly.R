@@ -145,7 +145,7 @@ mitoAssemble <- function(num.iter, reference.name, project.name, write.shell=FAL
     #  $ chmod a+rx [script_name].sh
 
 # you'll need MUSCLE dropped into the working directory
-mitoAlign <- function(project.name) {
+mitoAlign <- function(project.name, aligner=c("MAFFT", "MUSCLE")) {
   curr.dir <- getwd()
   
   # make a directory for the final mitoGenomes
@@ -163,11 +163,21 @@ mitoAlign <- function(project.name) {
   system(concatenate.assembly)
   
 
-  align.em <- paste(paste0(dirname(getwd()), "/muscle3.8.31_i86darwin64"),
-                "-in", paste0(alignment.folder, "/", project.name, "_Assembly_Alignment.fasta"),
-                "-out", paste0(alignment.folder, "/", project.name, "_Aligned_Assemblies.fasta"))
-  
-  system(align.em)
+  if(aligner=="MUSCLE"){
+    align.em <- paste(paste0(dirname(getwd()), "/muscle3.8.31_i86darwin64"),
+                      "-in", paste0(alignment.folder, "/", project.name, "_Assembly_Alignment.fasta"),
+                      "-out", paste0(alignment.folder, "/", project.name, "_Aligned_Assemblies.fasta"))
+    
+    system(align.em)
+  }
+  else if(aligner=="MAFFT"){
+    align.em <- paste(paste0(dirname(getwd()), "mafft.bat"),
+                      paste0(alignment.folder, "/", project.name, "_Assembly_Alignment.fasta"),
+                      ">", paste0(alignment.folder, "/", project.name, "_Aligned_Assemblies.fasta"))
+    
+    system(align.em)
+  }
+
   
   cat(c("your alignment of mtGenome assemblies is called:\n", 
                 paste0(alignment.folder, "/", project.name, "_Aligned_Assemblies.fasta")))
