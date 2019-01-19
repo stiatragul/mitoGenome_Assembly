@@ -91,11 +91,12 @@ The function *mitoAlign* will spit out the final alignment into your new directo
 your alignment of mtGenome assemblies is called:
  /Users/Ian/MITObim/Assa/Assa_mtGenomes/Assa_Aligned_Assemblies.fasta
 ```
-The function requires as input just one thing:
+The function requires as input just one thing, and your choice of aligner:
 ```{r eval=FALSE}
-mitoAlign(project.name)
+mitoAlign(project.name, aligner)
 ```
-* *project.name* is simply what you'd like the alignment to be named   
+* *project.name* is simply what you'd like the alignment to be named 
+* *aligner* is the alignment tool you'd like to use, either "MAFFT" or "MUSCLE"
 
 ***   
    
