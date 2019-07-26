@@ -200,6 +200,35 @@ mitoAlign <- function(project.name, aligner=c("MAFFT", "MUSCLE"), reference.name
 }
 
 
+# check each taxon to see if it's doodoo
+mitoCheck <- function(project.name, alignment, count.gaps=TRUE, missing.threshold=NULL){
+  library(ape); library(seqinr)
+  sub.dir <- paste0(getwd(),"/",project.name,"/")
+  
+  # I'm going to use the quick and dirty approach of getting a percentage of missing data
+  # to identify taxa we might want to remove
+  # But it might be worth it to think about using a base composition or content method
+  # like 'baseContent' in the 'spiderDev' package to do this as well
+  # the only worry is that it'll consistently flag outgroups
+  
+  full.align <- read.dna(paste0(sub.dir, paste0(alignment, ".fasta")), format="fasta")
+  if(count.gaps==TRUE) {missing.bases <- c(2, 240, 4)} else missing.bases <- c(2,240)
+  missing.sum <- apply(full.align, MARGIN = 1, FUN = function(x) length(which(as.numeric(x) %in% missing.bases)))
+  missing.percent <- missing.sum/ncol(full.align)
+  
+  print(as.data.frame(missing.percent))
+  
+  if(!is.null(missing.threshold)){
+    bad.names <- names(which(missing.percent >= missing.threshold))
+    print(paste("dropping", bad.names))
+    good.names <- setdiff(rownames(full.align), bad.names)
+    new.align <- full.align[which(rownames(full.align) %in% good.names), ]
+    write.FASTA(new.align, paste0(sub.dir, paste0(alignment,"_Reduced"),".fasta"))
+    cat(c("your reduced alignment is now called:\n", 
+          paste0(sub.dir, paste0(alignment,"_Reduced"),".fasta")))
+  } else cat(c("your alignment has not been changed"))
+}
+
 # chop the mitoGenomes up into pieces
 mitoChop <- function(project.name, alignment, character.sets){
   library(ape); library(seqinr)
@@ -221,6 +250,8 @@ mitoChop <- function(project.name, alignment, character.sets){
   cat(c("your separated mitochondrial loci alignments are in a folder called:\n", 
         alignment.folder))
 }
+
+
 
 
 #

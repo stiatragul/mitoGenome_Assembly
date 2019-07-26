@@ -485,11 +485,35 @@ Start by creating a directory to hold:</p>
 <p>The function requires little information to do its job well. Bare minimum it should be given the project name, and your choice of aligner (“MUSCLE” or “MAFFT”). You can also designate the reference genome for aligning purposes:</p>
 <pre class="r"><code>mitoAlign(project.name, &quot;MUSCLE&quot;, reference.name)</code></pre>
 <ul>
-<li><em>project.name</em> what you’ve been calling the project, so it can find the folder with all your mitoGenome assemblies,</li>
+<li><em>project.name</em> what you’ve been calling the project, so it can find the folder with all your mitoGenome assemblies.<br />
+</li>
 <li><em>reference.name</em> if you’d like to improve your multi-mitoGenome alignment, you can align them back to your reference genome. By default, this is NULL, to specify it, just give it the name you provided in the <em>mitoAssemble</em> step.</li>
 </ul>
+<p>At the moment, I’d probably suggest using the MAFFT aligner with the reference option if possible. Aligning the assembled mitogenomes without a reference can result in some poor behavior from poorly assembled genomes.</p>
 <hr />
-<p>The third function <em>mitoChop</em> will:</p>
+<p>The third function <em>mitoCheck</em> will:</p>
+<ul>
+<li>read in your alignment, and provide information about missing/gaps in your data<br />
+</li>
+<li>remove taxa with low amounts of sequence if you’d like</li>
+</ul>
+<p>You just have to give it the alignment and a little info:</p>
+<pre class="r"><code>mitoCheck(project.name, alignment, count.gaps=T, missing.threshold=NULL)</code></pre>
+<ul>
+<li><em>project.name</em> is again, just what you’ve been calling the project so far (name of the directory)<br />
+</li>
+<li><em>alignment</em> is the name of the output .fasta file from the <em>mitoAlign</em> step<br />
+</li>
+<li><em>count.gaps</em> is just a TRUE/FALSE statement about whether to count gaps as missing data<br />
+</li>
+<li><em>missing.threshold</em> if you want to remove taxa that exceed a certain percentage of missing data, indicate that here (0 &lt; x &lt; 1)</li>
+</ul>
+<p>If you do decide to trim taxa based on missing data, the function will produce a new alignment and tell you the name:</p>
+<pre class="r"><code>your reduced alignment is now called:
+/Users/Ian/MITObim/Assa/Assa_mtGenomes/Assa_Aligned_Assemblies_Reduced.fasta</code></pre>
+<p>I thought about using a different metric such as base composition/content, but I haven’t thought about it enough to implement it well. Instead, it always identifies the outgroups as being funky, so I’ve just stuck with missing data.</p>
+<hr />
+<p>The last function <em>mitoChop</em> will:</p>
 <ul>
 <li>take the whole mitoGenome alignment and split it up by locus<br />
 </li>
@@ -499,7 +523,7 @@ Start by creating a directory to hold:</p>
 <pre class="r"><code>your separated mitochondrial loci alignments are in a folder called::
  /Users/Ian/MITObim/Assa/Assa_mtGenomes/Assa_mitoLoci</code></pre>
 <p>You just have to provide a character set file as a .CSV so it knows where to cut it up</p>
-<pre class="r"><code>mitoChop(project.name, alignment, character.sets)</code></pre>
+<pre class="r"><code>mitoChop(project.name, alignment, character.sets=NULL)</code></pre>
 <ul>
 <li><em>project.name</em> is again, just what you’ve been calling the project so far (name of the directory)<br />
 </li>
