@@ -22,7 +22,6 @@ Ian
 
 If you're on a mac, downloading this repository will include MUSCLE and MAFFT suited for a mac, so you can plug 'n' play. If you're on a Windows or Linux machine, you'll have to do this separately, and adjust the call to the programs in 'mitoAlign.R'. Sorry, I'm just too dumb.
 
-\pagebreak
 
 # Multiple mtGenome assembly/alignment using MITObim from R
 ## Why Bother?
@@ -56,7 +55,6 @@ Here's a quick schematic of what the structure should look like:
         |-- Taxon2_R1.fastq.gz
         |-- Taxon2_R2.fastq.gz
 ```
-\pagebreak
 
 ## Executing the Code
 Open a new R script, and source the functions we'll need
@@ -103,12 +101,38 @@ The function requires little information to do its job well. Bare minimum it sho
 ```{r eval=FALSE}
 mitoAlign(project.name, "MUSCLE", reference.name)
 ```
-* *project.name* what you've been calling the project, so it can find the folder with all your mitoGenome assemblies,
-* *reference.name* if you'd like to improve your multi-mitoGenome alignment, you can align them back to your reference genome. By default, this is NULL, to specify it, just give it the name you provided in the *mitoAssemble* step.
+* *project.name* what you've been calling the project, so it can find the folder with all your mitoGenome assemblies.  
+* *reference.name* if you'd like to improve your multi-mitoGenome alignment, you can align them back to your reference genome. By default, this is NULL, to specify it, just give it the name you provided in the *mitoAssemble* step.  
+
+At the moment, I'd probably suggest using the MAFFT aligner with the reference option if possible. Aligning the assembled mitogenomes without a reference can result in some poor behavior from poorly assembled genomes.
 
 ***   
 
-The third function *mitoChop* will:  
+The third function *mitoCheck* will:  
+
+* read in your alignment, and provide information about missing/gaps in your data  
+* remove taxa with low amounts of sequence if you'd like  
+
+You just have to give it the alignment and a little info:
+```{r eval=FALSE}
+mitoCheck(project.name, alignment, count.gaps=T, missing.threshold=NULL)
+```
+* *project.name* is again, just what you've been calling the project so far (name of the directory)  
+* *alignment* is the name of the output .fasta file from the *mitoAlign* step  
+* *count.gaps* is just a TRUE/FALSE statement about whether to count gaps as missing data  
+* *missing.threshold* if you want to remove taxa that exceed a certain percentage of missing data, indicate that here (0 < x < 1)  
+
+If you do decide to trim taxa based on missing data, the function will produce a new alignment and tell you the name:
+```{r eval=FALSE}
+your reduced alignment is now called:
+/Users/Ian/MITObim/Assa/Assa_mtGenomes/Assa_Aligned_Assemblies_Reduced.fasta
+```
+I thought about using a different metric such as base composition/content, but I haven't thought about it enough to implement it well. Instead, it always identifies the outgroups as being funky, so I've just stuck with missing data. 
+
+
+***   
+
+The last function *mitoChop* will:  
 
 * take the whole mitoGenome alignment and split it up by locus  
 * this function requires the R packages *ape* and *seqinr* to read and write the files.  
@@ -120,7 +144,7 @@ your separated mitochondrial loci alignments are in a folder called::
 ```
 You just have to provide a character set file as a .CSV so it knows where to cut it up
 ```{r eval=FALSE}
-mitoChop(project.name, alignment, character.sets)
+mitoChop(project.name, alignment, character.sets=NULL)
 ```
 * *project.name* is again, just what you've been calling the project so far (name of the directory)  
 * *alignment* the name of the output .fasta file from the *mitoAlign* step  
