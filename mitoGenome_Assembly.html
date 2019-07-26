@@ -11,7 +11,7 @@
 
 <meta name="author" content="Ian G. Brennan" />
 
-<meta name="date" content="2018-04-22" />
+<meta name="date" content="2019-07-26" />
 
 <title>mitoGenome Assembly</title>
 
@@ -256,9 +256,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type="text/css">
 .main-container {
@@ -289,8 +287,6 @@ summary {
 </style>
 
 
-
-<div class="container-fluid main-container">
 
 <!-- tabsets -->
 
@@ -365,21 +361,30 @@ $(document).ready(function () {
 
 
 
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
 
 <div class="fluid-row" id="header">
 
 
 
 <h1 class="title toc-ignore">mitoGenome Assembly</h1>
-<h4 class="author"><em>Ian G. Brennan</em></h4>
-<h4 class="date"><em>22 April 2018</em></h4>
+<h4 class="author">Ian G. Brennan</h4>
+<h4 class="date">26 July 2019</h4>
 
 </div>
 
 <div id="TOC">
 <ul>
 <li><a href="#install-the-software">Install the software</a></li>
-<li><a href="#multiple-mtgenome-assembly-and-alignment-using-mitobim-in-r">Multiple mtGenome assembly and alignment using MITObim in R</a><ul>
+<li><a href="#multiple-mtgenome-assemblyalignment-using-mitobim-from-r">Multiple mtGenome assembly/alignment using MITObim from R</a><ul>
 <li><a href="#why-bother">Why Bother?</a></li>
 <li><a href="#file-preparation">File Preparation</a></li>
 <li><a href="#executing-the-code">Executing the Code</a></li>
@@ -400,12 +405,14 @@ $(document).ready(function () {
 <li>MAFFT<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>: <a href="https://mafft.cbrc.jp/alignment/software/" class="uri">https://mafft.cbrc.jp/alignment/software/</a></li>
 </ol>
 <hr />
+<p>If you’re on a mac, downloading this repository will include MUSCLE and MAFFT suited for a mac, so you can plug ‘n’ play. If you’re on a Windows or Linux machine, you’ll have to do this separately, and adjust the call to the programs in ‘mitoAlign.R’. Sorry, I’m just too dumb.</p>
+
 </div>
-<div id="multiple-mtgenome-assembly-and-alignment-using-mitobim-in-r" class="section level1">
-<h1>Multiple mtGenome assembly and alignment using MITObim in R</h1>
+<div id="multiple-mtgenome-assemblyalignment-using-mitobim-from-r" class="section level1">
+<h1>Multiple mtGenome assembly/alignment using MITObim from R</h1>
 <div id="why-bother" class="section level2">
 <h2>Why Bother?</h2>
-<p>As a result of the exon capture process for Anchored Hybrid Enrichment projects, we’re getting a considerable amount of mitochondrial bycatch. This mtDNA can provide a lot of information about past introgression events, and give a separate phylogenetic history for the group of interest. Also, ::<em>free data</em>::.</p>
+<p>As a result of the exon capture process for Anchored Hybrid Enrichment projects, we’re getting a considerable amount of mitochondrial bycatch in our raw reads. This mtDNA can provide a lot of information including a separate phylogenetic history for the group of interest, or even past introgression events. Also, ::<em>free data</em>::.</p>
 <hr />
 </div>
 <div id="file-preparation" class="section level2">
@@ -417,8 +424,8 @@ Start by creating a directory to hold:</p>
 </li>
 <li>the MIRA sequence assembler and mapper directory (’mira.4.0.2…’)<br />
 </li>
-<li>the MUSCLE executable (’muscle3.8.31…’)<br />
-</li>
+<li>the MUSCLE executable (’muscle3.8.31…’)</li>
+<li>the MAFFT folder (’mafft-mac’)</li>
 <li>a project-specific directory holding all your mtDNA reads for each sample in subdirectories (’Frogs’), and your reference mtGenome as a fasta file, labelled ’[taxon]_mtGenome.fasta’</li>
 </ul>
 <p>Here’s a quick schematic of what the structure should look like:</p>
@@ -470,14 +477,35 @@ Start by creating a directory to hold:</p>
 <ul>
 <li>combine all assembled mtGenomes into a single fasta alignment ([project.name]_Assembly_Alignment.fasta)<br />
 </li>
-<li>align the assemblies using MUSCLE or MAFFT, into a single final alignment ([project.name_Aligned_Assemblies.fasta]) The function <em>mitoAlign</em> will spit out the final alignment into your new directory, and tell you where it is:</li>
+<li>align the assemblies using MUSCLE or MAFFT, into a single final alignment ([project.name_Aligned_Assemblies.fasta])</li>
 </ul>
+<p>The function <em>mitoAlign</em> will spit out the final alignment into your new directory, and tell you where it is:</p>
 <pre class="r"><code>your alignment of mtGenome assemblies is called:
  /Users/Ian/MITObim/Assa/Assa_mtGenomes/Assa_Aligned_Assemblies.fasta</code></pre>
-<p>The function requires as input just one thing, and your choice of aligner (“MUSCLE” or “MAFFT”):</p>
-<pre class="r"><code>mitoAlign(project.name, &quot;MUSCLE&quot;)</code></pre>
+<p>The function requires little information to do its job well. Bare minimum it should be given the project name, and your choice of aligner (“MUSCLE” or “MAFFT”). You can also designate the reference genome for aligning purposes:</p>
+<pre class="r"><code>mitoAlign(project.name, &quot;MUSCLE&quot;, reference.name)</code></pre>
 <ul>
-<li><em>project.name</em> is simply what you’d like the alignment to be named</li>
+<li><em>project.name</em> what you’ve been calling the project, so it can find the folder with all your mitoGenome assemblies,</li>
+<li><em>reference.name</em> if you’d like to improve your multi-mitoGenome alignment, you can align them back to your reference genome. By default, this is NULL, to specify it, just give it the name you provided in the <em>mitoAssemble</em> step.</li>
+</ul>
+<hr />
+<p>The third function <em>mitoChop</em> will:</p>
+<ul>
+<li>take the whole mitoGenome alignment and split it up by locus<br />
+</li>
+<li>this function requires the R packages <em>ape</em> and <em>seqinr</em> to read and write the files.</li>
+</ul>
+<p>The function will kick out the alignment for each mitochondrial locus (CDS/gene, rRNA, tRNA, <em>et al</em>.) separately into a new folder:</p>
+<pre class="r"><code>your separated mitochondrial loci alignments are in a folder called::
+ /Users/Ian/MITObim/Assa/Assa_mtGenomes/Assa_mitoLoci</code></pre>
+<p>You just have to provide a character set file as a .CSV so it knows where to cut it up</p>
+<pre class="r"><code>mitoChop(project.name, alignment, character.sets)</code></pre>
+<ul>
+<li><em>project.name</em> is again, just what you’ve been calling the project so far (name of the directory)<br />
+</li>
+<li><em>alignment</em> the name of the output .fasta file from the <em>mitoAlign</em> step<br />
+</li>
+<li><em>character.sets</em> is the .CSV file with three columns “Name”, “Minimum”, and “Maximum”. These correspond to the locus name, the starting position (<em>Minimum</em>), and final position (<em>Maximum</em>) for each locus. An example is included in the respository (“mitoGenome_Annotations_Example.csv”).</li>
 </ul>
 <hr />
 <p>There’s probably a bunch of other slick things I could do after this, like have it plot the individual assembly lengths, but I’m not sure it’s worth it at the moment. Let me know if there’s something specific you’re looking for though.<br />

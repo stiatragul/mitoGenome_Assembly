@@ -145,7 +145,7 @@ mitoAssemble <- function(num.iter, reference.name, project.name, write.shell=FAL
     #  $ chmod a+rx [script_name].sh
 
 # you'll need MUSCLE dropped into the working directory
-mitoAlign <- function(project.name, aligner=c("MAFFT", "MUSCLE")) {
+mitoAlign <- function(project.name, aligner=c("MAFFT", "MUSCLE"), reference.name=NULL) {
   curr.dir <- getwd()
   
   # make a directory for the final mitoGenomes
@@ -162,23 +162,65 @@ mitoAlign <- function(project.name, aligner=c("MAFFT", "MUSCLE")) {
   
   system(concatenate.assembly)
   
-
+  #### if you're on a PC or Linux machine, you'll have to adjust the paths to MUSCLE or MAFFT, sorry!
   if(aligner=="MUSCLE"){
-    align.em <- paste(paste0(dirname(getwd()), "/muscle3.8.31_i86darwin64"),
-                      "-in", paste0(alignment.folder, "/", project.name, "_Assembly_Alignment.fasta"),
-                      "-out", paste0(alignment.folder, "/", project.name, "_Aligned_Assemblies.fasta"))
+    if(is.null(reference.name)){
+      align.em <- paste(paste0(dirname(getwd()), "/muscle3.8.31_i86darwin64"),
+                        "-in", paste0(alignment.folder, "/", project.name, "_Assembly_Alignment.fasta"),
+                        "-out", paste0(alignment.folder, "/", project.name, "_Aligned_Assemblies.fasta"))
+    } else if(!is.null(reference.name)){stop("I'm dumb and don't know how to align to a reference sequence with MUSCLE...yet. Maybe try MAFFT until I've fixed this.")}
+
     
     system(align.em)
   }
+  
   else if(aligner=="MAFFT"){
-    align.em <- paste(paste0(dirname(getwd()), "mafft.bat"),
-                      paste0(alignment.folder, "/", project.name, "_Assembly_Alignment.fasta"),
-                      ">", paste0(alignment.folder, "/", project.name, "_Aligned_Assemblies.fasta"))
-    
+    if(is.null(reference.name)){
+      align.em <- paste(paste0(dirname(getwd()), "/mafft-mac/mafft.bat"),
+                        #"/Applications/mafft-mac/mafft.bat",
+                        paste0(alignment.folder, "/", project.name, "_Assembly_Alignment.fasta"),
+                        ">", paste0(alignment.folder, "/", project.name, "_Aligned_Assemblies.fasta"))
+    } else if(!is.null(reference.name)){
+      ref.name <- paste0(reference.name, "_mtGenome.fasta")
+      align.em <- paste(paste0(dirname(getwd()), "/mafft-mac/mafft.bat"), "--addfull",
+                        #"/Applications/mafft-mac/mafft.bat", "--addfull",
+                        paste0(alignment.folder, "/", project.name, "_Assembly_Alignment.fasta"),
+                        "--keeplength", ref.name, 
+                        ">", paste0(alignment.folder, "/", project.name, "_RefAligned_Assemblies.fasta"))
+    }
+
     system(align.em)
   }
 
-  
-  cat(c("your alignment of mtGenome assemblies is called:\n", 
-                paste0(alignment.folder, "/", project.name, "_Aligned_Assemblies.fasta")))
+  if(is.null(reference.name)){  cat(c("your alignment of mtGenome assemblies is called:\n", 
+                                      paste0(alignment.folder, "/", project.name, "_Aligned_Assemblies.fasta")))}
+  else if(!is.null(reference.name)){  cat(c("your alignment of mtGenome assemblies is called:\n", 
+                                      paste0(alignment.folder, "/", project.name, "_RefAligned_Assemblies.fasta")))}
+
 }
+
+
+# chop the mitoGenomes up into pieces
+mitoChop <- function(project.name, alignment, character.sets){
+  library(ape); library(seqinr)
+  sub.dir <- paste0(getwd(),"/",project.name,"/")
+  
+  # make a directory for the split up mitochondrial loci
+  alignment.folder <- paste0(sub.dir, project.name, "_mitoLoci")
+  system(paste("mkdir", alignment.folder))
+  
+  concatenated <- read.dna(paste0(sub.dir, paste0(alignment, ".fasta")), format="fasta")
+  loci <- read.csv(paste0(sub.dir, character.sets), header=T)
+  # make sure you've removed commas from any numbers!
+  
+  for (i in 1:nrow(loci)){
+    curr.locus <- loci[i,]
+    extracted.locus <- concatenated[ , (curr.locus$Minimum):(curr.locus$Maximum)]
+    write.FASTA(extracted.locus, paste0(alignment.folder,"/",curr.locus$Name,".fasta"))
+  }
+  cat(c("your separated mitochondrial loci alignments are in a folder called:\n", 
+        alignment.folder))
+}
+
+
+#
