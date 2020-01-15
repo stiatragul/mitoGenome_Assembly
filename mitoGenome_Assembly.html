@@ -7,11 +7,12 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 <meta name="author" content="Ian G. Brennan" />
 
-<meta name="date" content="2019-07-26" />
+<meta name="date" content="2020-01-14" />
 
 <title>mitoGenome Assembly</title>
 
@@ -270,7 +271,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -344,18 +344,6 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
@@ -377,7 +365,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">mitoGenome Assembly</h1>
 <h4 class="author">Ian G. Brennan</h4>
-<h4 class="date">26 July 2019</h4>
+<h4 class="date">14 January 2020</h4>
 
 </div>
 
@@ -387,13 +375,19 @@ $(document).ready(function () {
 <li><a href="#multiple-mtgenome-assemblyalignment-using-mitobim-from-r">Multiple mtGenome assembly/alignment using MITObim from R</a><ul>
 <li><a href="#why-bother">Why Bother?</a></li>
 <li><a href="#file-preparation">File Preparation</a></li>
-<li><a href="#executing-the-code">Executing the Code</a></li>
+<li><a href="#executing-the-code">Executing the Code</a><ul>
+<li><a href="#mitoassemble">mitoAssemble</a></li>
+<li><a href="#mitocollate">mitoCollate</a></li>
+<li><a href="#mitoalign">mitoAlign</a></li>
+<li><a href="#mitocheck">mitoCheck</a></li>
+<li><a href="#mitochop">mitoChop</a></li>
+</ul></li>
 </ul></li>
 </ul>
 </div>
 
 <hr />
-
+<div style="page-break-after: always;"></div>
 <div id="install-the-software" class="section level1">
 <h1>Install the software</h1>
 <ol style="list-style-type: decimal">
@@ -406,7 +400,7 @@ $(document).ready(function () {
 </ol>
 <hr />
 <p>If you’re on a mac, downloading this repository will include MUSCLE and MAFFT suited for a mac, so you can plug ‘n’ play. If you’re on a Windows or Linux machine, you’ll have to do this separately, and adjust the call to the programs in ‘mitoAlign.R’. Sorry, I’m just too dumb.</p>
-
+<div style="page-break-after: always;"></div>
 </div>
 <div id="multiple-mtgenome-assemblyalignment-using-mitobim-from-r" class="section level1">
 <h1>Multiple mtGenome assembly/alignment using MITObim from R</h1>
@@ -420,13 +414,13 @@ $(document).ready(function () {
 <p>We’ll use the MITObim pipeline, run from R to assemble our mtGenomes against a reference (find one on GenBank, distantly related is OK). We’ll then pull out the final assembly for each sample and align them against each other using MUSCLE.<br />
 Start by creating a directory to hold:</p>
 <ul>
-<li>the MITObim pipeline (’MITObim.pl’)<br />
+<li>the MITObim pipeline (‘MITObim.pl’)<br />
 </li>
-<li>the MIRA sequence assembler and mapper directory (’mira.4.0.2…’)<br />
+<li>the MIRA sequence assembler and mapper directory (‘mira.4.0.2…’)<br />
 </li>
-<li>the MUSCLE executable (’muscle3.8.31…’)</li>
-<li>the MAFFT folder (’mafft-mac’)</li>
-<li>a project-specific directory holding all your mtDNA reads for each sample in subdirectories (’Frogs’), and your reference mtGenome as a fasta file, labelled ’[taxon]_mtGenome.fasta’</li>
+<li>the MUSCLE executable (‘muscle3.8.31…’)</li>
+<li>the MAFFT folder (‘mafft-mac’)</li>
+<li>a project-specific directory holding all your mtDNA reads for each sample in subdirectories (‘Frogs’), and your reference mtGenome as a fasta file, labelled ’[taxon]_mtGenome.fasta’</li>
 </ul>
 <p>Here’s a quick schematic of what the structure should look like:</p>
 <pre class="bash"><code>/PATH_TO_PARENT_DIRECTORY/mtGenomes
@@ -442,7 +436,7 @@ Start by creating a directory to hold:</p>
     |-- Taxon2
         |-- Taxon2_R1.fastq.gz
         |-- Taxon2_R2.fastq.gz</code></pre>
-
+<div style="page-break-after: always;"></div>
 </div>
 <div id="executing-the-code" class="section level2">
 <h2>Executing the Code</h2>
@@ -451,6 +445,8 @@ Start by creating a directory to hold:</p>
 <p>Then set your working directory to the project-specific directory (I’ve called this directory ‘Frogs’). This holds a subdirectory for each sample, and your reference mitogenome.</p>
 <pre class="r"><code>setwd(&quot;/PATH_TO_DIR/mtGenomes/Frogs&quot;)</code></pre>
 <hr />
+<div id="mitoassemble" class="section level3">
+<h3>mitoAssemble</h3>
 <p>The first function (<em>mitoAssemble</em>) assumes that in the directory ‘Frogs’, there are one or more subdirectories (1 per sample), with one or more gzipped fastq files of the raw reads. For each sample (subdirectory), it will:</p>
 <ul>
 <li>merge (concatenate) any *fastq.gz files together.<br />
@@ -461,19 +457,48 @@ Start by creating a directory to hold:</p>
 </li>
 <li>copy the assembled mtGenome to a directory of all assemblies</li>
 </ul>
-<p>The function requires as input, three things:</p>
-<pre class="r"><code>mitoAssemble(num.iter, reference.name, project.name)</code></pre>
+<p>The function can be either run sequentially (one mitogenome assembled after another), or in parallel (multiple mitogenomes assembled simultaneously), and requires as input just a few things:</p>
+<pre class="r"><code>mitoAssemble(num.iter, reference.name, project.name,
+             write.shell, ncores)</code></pre>
 <ul>
 <li><em>num.iter</em> is the number of assembly iterations MITObim should try before it times out and moves on to the next sample. I usually leave this set to 100, sometimes it takes 4 iterations, sometimes 60, hard to know.<br />
 </li>
 <li><em>reference.name</em> is the unique name of your reference genome fasta file which precedes ’_mtGenome.fasta’<br />
 </li>
 <li><em>project.name</em> is what you’d like the generated directories to be called (where the assemblies are stored)</li>
+<li><em>write.shell</em> if you’d like the function to write a shell script so that you can run MITObim in parallel</li>
+<li><em>ncores</em> designate the number of cores to use if you want to run in parallel</li>
 </ul>
-<p>The function <em>mitoAssemble</em> will spit out all the assemblies to a new directory, and tell you where it is:</p>
+<p>If run sequentially (<em>write.shell = FALSE</em>), the function <em>mitoAssemble</em> will spit out all the assemblies to a new directory, and tell you where it is:</p>
 <pre class="r"><code>Assembly(s) completed and saved to: /Users/Ian/MITObim/Assa/Assa_mtGenomes</code></pre>
+<p>Depending on how many you need to assemble, this could take a while.</p>
+<p>If run in parallel (<em>write.shell = TRUE</em>), the function will spit out a shell script for you to drop into your terminal (outside R suggested), and provide instructions:</p>
+<pre class="r"><code>Your shell script for running MITObim in parallel is written to:
+/Users/Ian/MITObim/Assa/Assa_parallel.txt
+Execute the command in parallel by copy/paste to your terminal:
+parallel -j 14 :::: /Users/Ian/MITObim/Assa/Assa_parallel.txt</code></pre>
+<p>This requires you have <em>parallel</em> installed to your machine, which you can easily do with <em>$ brew install parallel</em>, assuming you have <em>homebrew</em> installed (highly recommended).</p>
 <hr />
-<p>The second function <em>mitoAlign</em> will:</p>
+</div>
+<div id="mitocollate" class="section level3">
+<h3>mitoCollate</h3>
+<p>If you have used the parallel option <em>write.shell = T</em> for the function <em>mitoAssemble</em>, then you’ll need to pull together the best assembly for each sample into a single location. This function will:</p>
+<ul>
+<li>find each completed assembly</li>
+<li>rename the assembly according to the sample name</li>
+<li>rename the file according to the sample name</li>
+<li>copy it to a folder which will hold all the assemblies</li>
+</ul>
+<p>The function requires only the name of the project:</p>
+<pre class="r"><code>mitoCollate(project.name)</code></pre>
+<ul>
+<li><em>project.name</em> is what you’d like the generated directories to be called (where the assemblies are stored)</li>
+</ul>
+<hr />
+</div>
+<div id="mitoalign" class="section level3">
+<h3>mitoAlign</h3>
+<p>The next function <em>mitoAlign</em> will:</p>
 <ul>
 <li>combine all assembled mtGenomes into a single fasta alignment ([project.name]_Assembly_Alignment.fasta)<br />
 </li>
@@ -491,7 +516,10 @@ Start by creating a directory to hold:</p>
 </ul>
 <p>At the moment, I’d probably suggest using the MAFFT aligner with the reference option if possible. Aligning the assembled mitogenomes without a reference can result in some poor behavior from poorly assembled genomes.</p>
 <hr />
-<p>The third function <em>mitoCheck</em> will:</p>
+</div>
+<div id="mitocheck" class="section level3">
+<h3>mitoCheck</h3>
+<p>The function <em>mitoCheck</em> will:</p>
 <ul>
 <li>read in your alignment, and provide information about missing/gaps in your data<br />
 </li>
@@ -513,6 +541,9 @@ Start by creating a directory to hold:</p>
 /Users/Ian/MITObim/Assa/Assa_mtGenomes/Assa_Aligned_Assemblies_Reduced.fasta</code></pre>
 <p>I thought about using a different metric such as base composition/content, but I haven’t thought about it enough to implement it well. Instead, it always identifies the outgroups as being funky, so I’ve just stuck with missing data.</p>
 <hr />
+</div>
+<div id="mitochop" class="section level3">
+<h3>mitoChop</h3>
 <p>The last function <em>mitoChop</em> will:</p>
 <ul>
 <li>take the whole mitoGenome alignment and split it up by locus<br />
@@ -537,12 +568,13 @@ Good luck!</p>
 <hr />
 </div>
 </div>
+</div>
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>Hahn, C., Bachmann, L., Chevreux, B. Reconstructing mitochondrial genomes directly from genomic next-generation sequencing - a baiting and iterative mapping approach. Nucleic Acids Research 41:13. <a href="doi:10.1093/nar/gkt371" class="uri">doi:10.1093/nar/gkt371</a> (2013).<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>Edgar, R.C. MUSCLE: multiple sequence alignment with high accuracy and high throughput. Nucleic Acids Research 32(5). <a href="doi:10.1093/nar/gkh340" class="uri">doi:10.1093/nar/gkh340</a> (2004).<a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>Katoh, Standley. MAFFT multiple sequence alignment software version 7: improvements in performance and usability. Molecular Biology and Evolution 30:772-780 (2013).<a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>Hahn, C., Bachmann, L., Chevreux, B. Reconstructing mitochondrial genomes directly from genomic next-generation sequencing - a baiting and iterative mapping approach. Nucleic Acids Research 41:13. <a href="doi:10.1093/nar/gkt371" class="uri">doi:10.1093/nar/gkt371</a> (2013).<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>Edgar, R.C. MUSCLE: multiple sequence alignment with high accuracy and high throughput. Nucleic Acids Research 32(5). <a href="doi:10.1093/nar/gkh340" class="uri">doi:10.1093/nar/gkh340</a> (2004).<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>Katoh, Standley. MAFFT multiple sequence alignment software version 7: improvements in performance and usability. Molecular Biology and Evolution 30:772-780 (2013).<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
 
@@ -563,6 +595,23 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

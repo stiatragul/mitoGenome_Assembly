@@ -63,6 +63,11 @@ mitoAssemble <- function(num.iter, reference.name, project.name, write.shell=FAL
                            "-exec sed -i '' -e", new.name,  "{} ';'")
       system(rename.best)
       
+      # rename the file of the assembly
+      new.file <- paste0(current.directory, "/", paste0(sample.name, "_noIUPAC.fasta"))
+      rename.file <- paste("mv", allfiles[k], new.file)
+      system(rename.file)
+      
       # pull the best mitoGenome and drop it in a folder with the others
       copy.best <- paste("find", current.directory, "-name", "'*_noIUPAC.fasta\'", "-exec cp '{}'",
                          paste0(dirname(getwd()), "/", project.name, "_mtGenomes"), "';'")
@@ -133,16 +138,50 @@ mitoAssemble <- function(num.iter, reference.name, project.name, write.shell=FAL
     
     close(parallel.script)
     cat("Your shell script for running MITObim in parallel is written to:\n", 
-        paste0(curr.dir, "/", project.name, "_parallel.txt"))
+        paste0(curr.dir, "/", project.name, "_parallel.txt"),"\n")
     cat("Execute the command in parallel by copy/paste to your terminal:\n", 
-        paste(paste0("parallel ", "-j", ncores, " ::::"), paste0(curr.dir, "/", project.name, "_parallel.txt")))
+        paste(paste0("parallel ", "-j ", ncores, " ::::"), paste0(curr.dir, "/", project.name, "_parallel.txt")))
     #cat("Assembly(s) completed and saved to:", paste0(curr.dir, "/", project.name, "_mtGenomes"))
   }
 }
+# if you use the 'write.shell' option to run MITObim in parallel,
+# you'll have to collect the file and drop it into a terminal
 
-# need to create a shell script as an output, then can drop it into the terminal
-# need to make sure we give the shell the proper permissions:
-    #  $ chmod a+rx [script_name].sh
+# if you used the parallel version of 'mitoAssemble' 
+# you'll need to use 'mitoCollate' to pull the assemblies together
+mitoCollate <- function(project.name) {
+  # make a directory to catch the assembled mitoGenomes
+  genome.dir <- paste("mkdir", paste0(dirname(getwd()), "/", project.name, "_mtGenomes"))
+  system(genome.dir)
+  # get a list of all the final assemblies
+  allfiles <- list.files(pattern="_noIUPAC.fasta", full.names=F, recursive=T)
+  
+  for (k in 1:length(allfiles)){
+    # grab the sample name
+    int.name <- strsplit(allfiles[k], "/")
+    sample.name <- int.name[[1]][1]
+    # get the current directory name
+    current.directory <- paste0(getwd(), "/", int.name[[1]][1], "/", int.name[[1]][2])
+    
+    # rename the best assembly
+    new.name <- paste0("'1s/.*/" ,">", sample.name, "_Assembly", "/g", "'")
+    rename.best <- paste("find", current.directory, "-name", "'*_noIUPAC.fasta\'",
+                         "-exec sed -i '' -e", new.name,  "{} ';'")
+    system(rename.best)
+    
+    # rename the file of the assembly
+    new.file <- paste0(current.directory, "/", paste0(sample.name, "_noIUPAC.fasta"))
+    rename.file <- paste("mv", allfiles[k], new.file)
+    system(rename.file)
+    
+    # pull the best mitoGenome and drop it in a folder with the others
+    copy.best <- paste("find", current.directory, "-name", "'*_noIUPAC.fasta\'", "-exec cp '{}'",
+                       paste0(dirname(getwd()), "/", project.name, "_mtGenomes"), "';'")
+    system(copy.best)
+    
+    cat("finished assembling sample", k, "of", length(allfiles),":", sample.name,"\n") #keep track of what tree/loop# we're on
+  }
+}
 
 # you'll need MUSCLE dropped into the working directory
 mitoAlign <- function(project.name, aligner=c("MAFFT", "MUSCLE"), reference.name=NULL) {

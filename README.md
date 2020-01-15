@@ -67,6 +67,7 @@ setwd("/PATH_TO_DIR/mtGenomes/Frogs")
 ```
 ***
 
+### mitoAssemble
 The first function (*mitoAssemble*) assumes that in the directory 'Frogs', there are one or more subdirectories (1 per sample), with one or more gzipped fastq files of the raw reads. For each sample (subdirectory), it will:
 
 * merge (concatenate) any *fastq.gz files together.   
@@ -74,20 +75,53 @@ The first function (*mitoAssemble*) assumes that in the directory 'Frogs', there
 * call MITObim and attempt to assemble the mtGenome  
 * copy the assembled mtGenome to a directory of all assemblies  
 
-The function requires as input, three things:
+The function can be either run sequentially (one mitogenome assembled after another), or in parallel (multiple mitogenomes assembled simultaneously), and requires as input just a few things:
 ```{r eval=FALSE}
-mitoAssemble(num.iter, reference.name, project.name)
+mitoAssemble(num.iter, reference.name, project.name,
+			 write.shell, ncores)
 ```
 * *num.iter* is the number of assembly iterations MITObim should try before it times out and moves on to the next sample. I usually leave this set to 100, sometimes it takes 4 iterations, sometimes 60, hard to know.  
 * *reference.name* is the unique name of your reference genome fasta file which precedes '_mtGenome.fasta'  
 * *project.name* is what you'd like the generated directories to be called (where the assemblies are stored)
+* *write.shell* if you'd like the function to write a shell script so that you can run MITObim in parallel
+* *ncores* designate the number of cores to use if you want to run in parallel
 
-The function *mitoAssemble* will spit out all the assemblies to a new directory, and tell you where it is:
+If run sequentially (*write.shell = FALSE*), the function *mitoAssemble* will spit out all the assemblies to a new directory, and tell you where it is:
 ```{r eval=FALSE}
 Assembly(s) completed and saved to: /Users/Ian/MITObim/Assa/Assa_mtGenomes
 ```
-***   
-The second function *mitoAlign* will:  
+Depending on how many you need to assemble, this could take a while.
+
+If run in parallel (*write.shell = TRUE*), the function will spit out a shell script for you to drop into your terminal (outside R suggested), and provide instructions:
+```{r eval=FALSE}
+Your shell script for running MITObim in parallel is written to:
+/Users/Ian/MITObim/Assa/Assa_parallel.txt
+Execute the command in parallel by copy/paste to your terminal:
+parallel -j 14 :::: /Users/Ian/MITObim/Assa/Assa_parallel.txt
+```
+This requires you have *parallel* installed to your machine, which you can easily do with *$ brew install parallel*, assuming you have *homebrew* installed (highly recommended).
+
+*** 
+
+### mitoCollate
+If you have used the parallel option *write.shell = T* for the function *mitoAssemble*, then you'll need to pull together the best assembly for each sample into a single location. This function will:
+
+* find each completed assembly
+* rename the assembly according to the sample name
+* rename the file according to the sample name
+* copy it to a folder which will hold all the assemblies
+
+The function requires only the name of the project:
+```{r eval=FALSE}
+mitoCollate(project.name)
+```
+
+* *project.name* is what you'd like the generated directories to be called (where the assemblies are stored)
+
+***
+
+### mitoAlign
+The next function *mitoAlign* will:  
 
 * combine all assembled mtGenomes into a single fasta alignment ([project.name]_Assembly_Alignment.fasta)  
 * align the assemblies using MUSCLE or MAFFT, into a single final alignment ([project.name_Aligned_Assemblies.fasta])  
@@ -108,7 +142,8 @@ At the moment, I'd probably suggest using the MAFFT aligner with the reference o
 
 ***   
 
-The third function *mitoCheck* will:  
+### mitoCheck
+The function *mitoCheck* will:  
 
 * read in your alignment, and provide information about missing/gaps in your data  
 * remove taxa with low amounts of sequence if you'd like  
@@ -132,6 +167,7 @@ I thought about using a different metric such as base composition/content, but I
 
 ***   
 
+### mitoChop
 The last function *mitoChop* will:  
 
 * take the whole mitoGenome alignment and split it up by locus  
