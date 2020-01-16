@@ -5,6 +5,7 @@ This R script (*mtGenome_Assembly.R*) provides four functions for assembling, al
 I wrote these up because as a byproduct of a number of Anchored Hybrid Enrichment phylogenomics projects, we have a bloody avalanche of mitochondrial data available as bycatch from the exon capture process. By assembling the mitoGenomes, we're getting an alternative phylogenomic history that provides some interesting information regarding introgression and hybridization, and better resolution than previous mitochondrial data (one or two Sanger-sequenced loci). 
 
 The functions are available in the *mtGenome_Assembly.R* script, and a tutorial is available in the accompanying PDF.
+An example file named *Assembling_mtGenomes_Example.R* is included.
 Or, just download the R code, and follow the directions below.
 
 Cheers.  
