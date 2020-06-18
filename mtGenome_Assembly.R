@@ -85,7 +85,7 @@ mitoAssemble <- function(num.iter, reference.name, project.name, write.shell=FAL
     }
     
     # create a loop to assemble the genome of each sample in your working directory
-    parallel.script <- file(paste0(curr.dir, "/", project.name, "_parallel.txt"))
+    #parallel.script <- file(paste0(curr.dir, "/", project.name, "_parallel.txt"))
     for (p in 1:length(directories)){
       
       # create the call to change directory
@@ -113,7 +113,8 @@ mitoAssemble <- function(num.iter, reference.name, project.name, write.shell=FAL
                             "&> log --mirapath", path.to.mira)
       
       final.call <- paste(change.to.directory, ";", mitobim.call)
-      writeLines(final.call, con=parallel.script, sep="\n",)
+      #writeLines(final.call, con=parallel.script, sep="\n",)
+      write(final.call, file=paste0(curr.dir, "/", project.name, "_parallel.txt"), append=T, sep="\n")
       
       # set up the process to do 8 at a time, then wait
         # if(p%%ncores==0){
