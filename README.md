@@ -47,6 +47,9 @@ Here's a quick schematic of what the structure should look like:
 |-- mira_4.0.2_darwin13.1.0_x86_64_static
 |   |-- bin (et al.)
 |-- muscle3.8.31_i86darwin64
+|-- bbmap
+|   |-- reformat.sh
+|   |-- et al.
 |-- Frogs
     |-- [taxon]_mtGenome.fasta (reference genome)
     |-- Taxon1
@@ -86,6 +89,8 @@ mitoAssemble(num.iter, reference.name, project.name,
 * *project.name* is what you'd like the generated directories to be called (where the assemblies are stored)
 * *write.shell* if you'd like the function to write a shell script so that you can run MITObim in parallel
 * *ncores* designate the number of cores to use if you want to run in parallel
+* *combine* tells the function whether to use *cat* to combine raw read files, or *bbmap to create an interleaved file that can be used with the '--paired' flag in MITObim
+
 
 If run sequentially (*write.shell = FALSE*), the function *mitoAssemble* will spit out all the assemblies to a new directory, and tell you where it is:
 ```{r eval=FALSE}

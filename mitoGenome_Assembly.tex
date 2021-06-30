@@ -1,34 +1,47 @@
-\documentclass[]{article}
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
 \usepackage{lmodern}
 \usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
-\usepackage{fixltx2e} % provides \textsubscript
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
-\else % if luatex or xelatex
-  \ifxetex
-    \usepackage{mathspec}
-  \else
-    \usepackage{fontspec}
-  \fi
-  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
 \fi
-% use upquote if available, for straight quotes in verbatim environments
+% Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
-% use microtype if available
-\IfFileExists{microtype.sty}{%
-\usepackage{microtype}
-\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={mitoGenome Assembly},
+  pdfauthor={Ian G. Brennan},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
 \usepackage[margin=1in]{geometry}
-\usepackage{hyperref}
-\hypersetup{unicode=true,
-            pdftitle={mitoGenome Assembly},
-            pdfauthor={Ian G. Brennan},
-            pdfborder={0 0 0},
-            breaklinks=true}
-\urlstyle{same}  % don't use monospace font for urls
 \usepackage{color}
 \usepackage{fancyvrb}
 \newcommand{\VerbBar}{|}
@@ -69,7 +82,7 @@
 \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
 \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\usepackage{graphicx,grffile}
+\usepackage{graphicx}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
 \def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
@@ -78,53 +91,19 @@
 % margins by default, and it is still possible to overwrite the defaults
 % using explicit options in \includegraphics[width, height, ...]{}
 \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
-\IfFileExists{parskip.sty}{%
-\usepackage{parskip}
-}{% else
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{6pt plus 2pt minus 1pt}
-}
-\setlength{\emergencystretch}{3em}  % prevent overfull lines
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
-\setcounter{secnumdepth}{0}
-% Redefines (sub)paragraphs to behave more like sections
-\ifx\paragraph\undefined\else
-\let\oldparagraph\paragraph
-\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
-\fi
-\ifx\subparagraph\undefined\else
-\let\oldsubparagraph\subparagraph
-\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
-\fi
-
-%%% Use protect on footnotes to avoid problems with footnotes in titles
-\let\rmarkdownfootnote\footnote%
-\def\footnote{\protect\rmarkdownfootnote}
-
-%%% Change title format to be more compact
-\usepackage{titling}
-
-% Create subtitle command for use in maketitle
-\providecommand{\subtitle}[1]{
-  \posttitle{
-    \begin{center}\large#1\end{center}
-    }
-}
-
-\setlength{\droptitle}{-2em}
-
-  \title{mitoGenome Assembly}
-    \pretitle{\vspace{\droptitle}\centering\huge}
-  \posttitle{\par}
-    \author{Ian G. Brennan}
-    \preauthor{\centering\large\emph}
-  \postauthor{\par}
-      \predate{\centering\large\emph}
-  \postdate{\par}
-    \date{14 January 2020}
-
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
 \renewcommand{\linethickness}{0.05em}
+
+\title{mitoGenome Assembly}
+\author{Ian G. Brennan}
+\date{14 January 2020}
 
 \begin{document}
 \maketitle
@@ -133,7 +112,7 @@
 \setcounter{tocdepth}{2}
 \tableofcontents
 }
-\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \pagebreak
 
@@ -168,7 +147,7 @@
   \url{https://mafft.cbrc.jp/alignment/software/}
 \end{enumerate}
 
-\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 If you're on a mac, downloading this repository will include MUSCLE and
 MAFFT suited for a mac, so you can plug `n' play. If you're on a Windows
@@ -190,7 +169,7 @@ in our raw reads. This mtDNA can provide a lot of information including
 a separate phylogenetic history for the group of interest, or even past
 introgression events. Also, ::\emph{free data}::.
 
-\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \hypertarget{file-preparation}{%
 \subsection{File Preparation}\label{file-preparation}}
@@ -222,19 +201,22 @@ Here's a quick schematic of what the structure should look like:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\ExtensionTok{/PATH_TO_PARENT_DIRECTORY/mtGenomes}
-\KeywordTok{|}\ExtensionTok{--}\NormalTok{ MITObim.pl}
-\KeywordTok{|}\ExtensionTok{--}\NormalTok{ mira_4.0.2_darwin13.1.0_x86_64_static}
-\KeywordTok{|}   \KeywordTok{|}\ExtensionTok{--}\NormalTok{ bin (et al.)}
-\KeywordTok{|}\ExtensionTok{--}\NormalTok{ muscle3.8.31_i86darwin64}
-\KeywordTok{|}\ExtensionTok{--}\NormalTok{ Frogs}
-    \KeywordTok{|}\ExtensionTok{--}\NormalTok{ [taxon]_mtGenome.fasta (reference genome)}
-    \KeywordTok{|}\ExtensionTok{--}\NormalTok{ Taxon1}
-    \KeywordTok{|}   \KeywordTok{|}\ExtensionTok{--}\NormalTok{ Taxon1_R1.fastq.gz}
-    \KeywordTok{|}   \KeywordTok{|}\ExtensionTok{--}\NormalTok{ Taxon1_R2.fastq.gz}
-    \KeywordTok{|}\ExtensionTok{--}\NormalTok{ Taxon2}
-        \KeywordTok{|}\ExtensionTok{--}\NormalTok{ Taxon2_R1.fastq.gz}
-        \KeywordTok{|}\ExtensionTok{--}\NormalTok{ Taxon2_R2.fastq.gz}
+\ExtensionTok{/PATH\_TO\_PARENT\_DIRECTORY/mtGenomes}
+\KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ MITObim.pl}
+\KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ mira\_4.0.2\_darwin13.1.0\_x86\_64\_static}
+\KeywordTok{|}   \KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ bin (et al.)}
+\KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ muscle3.8.31\_i86darwin64}
+\KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ bbmap}
+\KeywordTok{|}   \KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ reformat.sh}
+\KeywordTok{|}   \KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ et al.}
+\KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ Frogs}
+    \KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ [taxon]\_mtGenome.fasta (reference genome)}
+    \KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ Taxon1}
+    \KeywordTok{|}   \KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ Taxon1\_R1.fastq.gz}
+    \KeywordTok{|}   \KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ Taxon1\_R2.fastq.gz}
+    \KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ Taxon2}
+        \KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ Taxon2\_R1.fastq.gz}
+        \KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ Taxon2\_R2.fastq.gz}
 \end{Highlighting}
 \end{Shaded}
 
@@ -247,7 +229,7 @@ Open a new R script, and source the functions we'll need
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{source}\NormalTok{(}\StringTok{"/PATH_TO_CODE/mtGenome_Assembly.R"}\NormalTok{)}
+\KeywordTok{source}\NormalTok{(}\StringTok{"/PATH\_TO\_CODE/mtGenome\_Assembly.R"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -257,11 +239,11 @@ sample, and your reference mitogenome.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{setwd}\NormalTok{(}\StringTok{"/PATH_TO_DIR/mtGenomes/Frogs"}\NormalTok{)}
+\KeywordTok{setwd}\NormalTok{(}\StringTok{"/PATH\_TO\_DIR/mtGenomes/Frogs"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \hypertarget{mitoassemble}{%
 \subsubsection{mitoAssemble}\label{mitoassemble}}
@@ -290,7 +272,7 @@ simultaneously), and requires as input just a few things:
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{mitoAssemble}\NormalTok{(num.iter, reference.name, project.name,}
-\NormalTok{             write.shell, ncores)}
+\NormalTok{             write.shell, ncores, }\DataTypeTok{combine =} \KeywordTok{c}\NormalTok{(}\StringTok{"cat"}\NormalTok{, }\StringTok{"bbmap"}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -313,6 +295,10 @@ simultaneously), and requires as input just a few things:
 \item
   \emph{ncores} designate the number of cores to use if you want to run
   in parallel
+\item
+  \emph{combine} tells the function whether to use \emph{cat} to combine
+  raw read files, or \emph{bbmap} to create an interleaved file that can
+  be used with the `--paired' flag in MITObim
 \end{itemize}
 
 If run sequentially (\emph{write.shell = FALSE}), the function
@@ -321,7 +307,7 @@ and tell you where it is:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{Assembly}\NormalTok{(s) completed and saved to}\OperatorTok{:}\StringTok{ }\ErrorTok{/}\NormalTok{Users}\OperatorTok{/}\NormalTok{Ian}\OperatorTok{/}\NormalTok{MITObim}\OperatorTok{/}\NormalTok{Assa}\OperatorTok{/}\NormalTok{Assa_mtGenomes}
+\KeywordTok{Assembly}\NormalTok{(s) completed and saved to}\OperatorTok{:}\StringTok{ }\ErrorTok{/}\NormalTok{Users}\OperatorTok{/}\NormalTok{Ian}\OperatorTok{/}\NormalTok{MITObim}\OperatorTok{/}\NormalTok{Assa}\OperatorTok{/}\NormalTok{Assa\_mtGenomes}
 \end{Highlighting}
 \end{Shaded}
 
@@ -334,9 +320,9 @@ suggested), and provide instructions:
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{Your shell script }\ControlFlowTok{for}\NormalTok{ running MITObim }\ControlFlowTok{in}\NormalTok{ parallel is written to}\OperatorTok{:}
-\ErrorTok{/}\NormalTok{Users}\OperatorTok{/}\NormalTok{Ian}\OperatorTok{/}\NormalTok{MITObim}\OperatorTok{/}\NormalTok{Assa}\OperatorTok{/}\NormalTok{Assa_parallel.txt}
+\ErrorTok{/}\NormalTok{Users}\OperatorTok{/}\NormalTok{Ian}\OperatorTok{/}\NormalTok{MITObim}\OperatorTok{/}\NormalTok{Assa}\OperatorTok{/}\NormalTok{Assa\_parallel.txt}
 \NormalTok{Execute the command }\ControlFlowTok{in}\NormalTok{ parallel by copy}\OperatorTok{/}\NormalTok{paste to your terminal}\OperatorTok{:}
-\NormalTok{parallel }\OperatorTok{-}\NormalTok{j }\DecValTok{14} \OperatorTok{:::}\ErrorTok{:}\StringTok{ }\ErrorTok{/}\NormalTok{Users}\OperatorTok{/}\NormalTok{Ian}\OperatorTok{/}\NormalTok{MITObim}\OperatorTok{/}\NormalTok{Assa}\OperatorTok{/}\NormalTok{Assa_parallel.txt}
+\NormalTok{parallel }\OperatorTok{{-}}\NormalTok{j }\DecValTok{14} \OperatorTok{:::}\ErrorTok{:}\StringTok{ }\ErrorTok{/}\NormalTok{Users}\OperatorTok{/}\NormalTok{Ian}\OperatorTok{/}\NormalTok{MITObim}\OperatorTok{/}\NormalTok{Assa}\OperatorTok{/}\NormalTok{Assa\_parallel.txt}
 \end{Highlighting}
 \end{Shaded}
 
@@ -344,7 +330,7 @@ This requires you have \emph{parallel} installed to your machine, which
 you can easily do with \emph{\$ brew install parallel}, assuming you
 have \emph{homebrew} installed (highly recommended).
 
-\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \hypertarget{mitocollate}{%
 \subsubsection{mitoCollate}\label{mitocollate}}
@@ -380,7 +366,7 @@ The function requires only the name of the project:
   called (where the assemblies are stored)
 \end{itemize}
 
-\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \hypertarget{mitoalign}{%
 \subsubsection{mitoAlign}\label{mitoalign}}
@@ -414,7 +400,7 @@ your new directory, and tell you where it is:
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{your alignment of mtGenome assemblies is called}\OperatorTok{:}
-\StringTok{  }\ErrorTok{/}\NormalTok{Users}\OperatorTok{/}\NormalTok{Ian}\OperatorTok{/}\NormalTok{MITObim}\OperatorTok{/}\NormalTok{Assa}\OperatorTok{/}\NormalTok{Assa_mtGenomes}\OperatorTok{/}\NormalTok{Assa_Aligned_Assemblies.fasta}
+\StringTok{  }\ErrorTok{/}\NormalTok{Users}\OperatorTok{/}\NormalTok{Ian}\OperatorTok{/}\NormalTok{MITObim}\OperatorTok{/}\NormalTok{Assa}\OperatorTok{/}\NormalTok{Assa\_mtGenomes}\OperatorTok{/}\NormalTok{Assa\_Aligned\_Assemblies.fasta}
 \end{Highlighting}
 \end{Shaded}
 
@@ -446,7 +432,7 @@ reference option if possible. Aligning the assembled mitogenomes without
 a reference can result in some poor behavior from poorly assembled
 genomes.
 
-\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \hypertarget{mitocheck}{%
 \subsubsection{mitoCheck}\label{mitocheck}}
@@ -493,7 +479,7 @@ produce a new alignment and tell you the name:
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{your reduced alignment is now called}\OperatorTok{:}
-\ErrorTok{/}\NormalTok{Users}\OperatorTok{/}\NormalTok{Ian}\OperatorTok{/}\NormalTok{MITObim}\OperatorTok{/}\NormalTok{Assa}\OperatorTok{/}\NormalTok{Assa_mtGenomes}\OperatorTok{/}\NormalTok{Assa_Aligned_Assemblies_Reduced.fasta}
+\ErrorTok{/}\NormalTok{Users}\OperatorTok{/}\NormalTok{Ian}\OperatorTok{/}\NormalTok{MITObim}\OperatorTok{/}\NormalTok{Assa}\OperatorTok{/}\NormalTok{Assa\_mtGenomes}\OperatorTok{/}\NormalTok{Assa\_Aligned\_Assemblies\_Reduced.fasta}
 \end{Highlighting}
 \end{Shaded}
 
@@ -502,7 +488,7 @@ composition/content, but I haven't thought about it enough to implement
 it well. Instead, it always identifies the outgroups as being funky, so
 I've just stuck with missing data.
 
-\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \hypertarget{mitochop}{%
 \subsubsection{mitoChop}\label{mitochop}}
@@ -524,7 +510,7 @@ The function will kick out the alignment for each mitochondrial locus
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{your separated mitochondrial loci alignments are }\ControlFlowTok{in}\NormalTok{ a folder called}\OperatorTok{::}
-\StringTok{ }\ErrorTok{/}\NormalTok{Users}\OperatorTok{/}\NormalTok{Ian}\OperatorTok{/}\NormalTok{MITObim}\OperatorTok{/}\NormalTok{Assa}\OperatorTok{/}\NormalTok{Assa_mtGenomes}\OperatorTok{/}\NormalTok{Assa_mitoLoci}
+\StringTok{ }\ErrorTok{/}\NormalTok{Users}\OperatorTok{/}\NormalTok{Ian}\OperatorTok{/}\NormalTok{MITObim}\OperatorTok{/}\NormalTok{Assa}\OperatorTok{/}\NormalTok{Assa\_mtGenomes}\OperatorTok{/}\NormalTok{Assa\_mitoLoci}
 \end{Highlighting}
 \end{Shaded}
 
@@ -553,7 +539,7 @@ where to cut it up
   respository (``mitoGenome\_Annotations\_Example.csv'').
 \end{itemize}
 
-\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 There's probably a bunch of other slick things I could do after this,
 like have it plot the individual assembly lengths, but I'm not sure it's
@@ -561,7 +547,6 @@ worth it at the moment. Let me know if there's something specific you're
 looking for though.\\
 Good luck!
 
-\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
-
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \end{document}

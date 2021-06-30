@@ -2,7 +2,8 @@
 # make sure to set your working directory first!
 # make sure to identify your reference genome by: *reference.name*_mtGenome.fasta
     # and include it in your working directory, along with MITObim.pl
-mitoAssemble <- function(num.iter, reference.name, project.name, write.shell=FALSE, ncores=NULL) {
+mitoAssemble <- function(num.iter, reference.name, project.name, write.shell=FALSE, ncores=NULL,
+                         combine = c("cat", "bbmap")) {
   curr.dir <- getwd()
   
   # copy the reference mtGenome to all the subdirectories
@@ -14,12 +15,36 @@ mitoAssemble <- function(num.iter, reference.name, project.name, write.shell=FAL
 
   #all.files <- list.files(test) #change 'test' to 'curr.dir'
   
+  # make a file that names all of the samples we're targeting
+  names.call <- paste("ls -d -- */ >> Sample_Names.txt")
+  system(names.call)
+  # drop the '/' after the file names (annoying, I know)
+  remove.slash <- paste("sed -i '' -e 's/.$//' Sample_Names.txt")
+  system(remove.slash)
+  
   # make a list of all the directories within your working directory (1 per sample to assemble)
   directories <- list.dirs(curr.dir, recursive=F) #change 'test' to 'curr.dir'
+      drop.bbmap <- directories[grep("bbmap", directories)]
+      drop.mira <- directories[grep("mira", directories)]
+      drop.mafft <- directories[grep("mafft", directories)]
+  directories <- directories[which(!directories %in% c(drop.bbmap, drop.mira, drop.mafft))]
   
-  # 
-  merge.libraries <- paste("for d in", paste0(curr.dir,"/*/"), "; do (cd", "\"$d\" && cat *.fastq.gz >> merged.fastq.gz); done")
-  system(merge.libraries)
+  # combined reads into a single either with 'cat' or 'BBMap' 
+  if(combine == "cat"){
+    merge.libraries <- paste("for d in", paste0(curr.dir,"/*/"), "; do (cd", "\"$d\" && cat *.fastq.gz >> merged.fastq.gz); done")
+    system(merge.libraries)
+  }
+  # interleaved file to use with '--paired' flag in MITObim
+  else if(combine == "bbmap"){
+    for (j in 1:length(directories)){
+      in.files <- dir(directories[[j]], pattern=".fastq.gz")
+      bbmap.call <- paste0(paste0(getwd(),"/bbmap/reformat.sh"), 
+                           " in1=", paste0(directories[[j]],"/",in.files[[1]]), 
+                           " in2=", paste0(directories[[j]],"/",in.files[[2]]), 
+                           " out=", paste0(directories[[j]],"/merged.fastq.gz"))
+      system(bbmap.call)
+    }
+  }
   
   if(!isTRUE(write.shell)) {
     
@@ -50,9 +75,18 @@ mitoAssemble <- function(num.iter, reference.name, project.name, write.shell=FAL
       # 
       int.name <- strsplit(current.directory, "/")
       sample.name <- int.name[[1]][length(int.name[[1]])]
-      mitobim.call <- paste(path.to.MITObim, "-start 1 -end", num.iter, "-sample", sample.name,
-                            "-ref", reference.name, "-readpool", all.reads, "--quick", ref.genome,
-                            "&> log --mirapath", path.to.mira)
+      
+      if(combine == "bbmap"){
+        mitobim.call <- paste(path.to.MITObim, "-start 1 -end", num.iter, "-sample", sample.name,
+                              "-ref", reference.name, "-readpool", all.reads, "--quick", ref.genome,
+                              "--paired &> log --mirapath", path.to.mira)        
+      }
+      else if(combine == "cat"){
+        mitobim.call <- paste(path.to.MITObim, "-start 1 -end", num.iter, "-sample", sample.name,
+                              "-ref", reference.name, "-readpool", all.reads, "--quick", ref.genome,
+                              "&> log --mirapath", path.to.mira)       
+      }
+
       
       final.call <- paste(change.to.directory, ";", mitobim.call)
       system(final.call)
@@ -85,9 +119,9 @@ mitoAssemble <- function(num.iter, reference.name, project.name, write.shell=FAL
     }
     
     # create a loop to assemble the genome of each sample in your working directory
-    #parallel.script <- file(paste0(curr.dir, "/", project.name, "_parallel.txt"))
+    #parallel.script <- file(paste0(curr.dir, "/", project.name, "_parallel.txt"), open="a")
     for (p in 1:length(directories)){
-      
+
       # create the call to change directory
       current.directory <- directories[p]
       change.to.directory <- paste("cd", current.directory)
@@ -108,14 +142,23 @@ mitoAssemble <- function(num.iter, reference.name, project.name, write.shell=FAL
       # 
       int.name <- strsplit(current.directory, "/")
       sample.name <- int.name[[1]][length(int.name[[1]])]
-      mitobim.call <- paste(path.to.MITObim, "-start 1 -end", num.iter, "-sample", sample.name,
-                            "-ref", reference.name, "-readpool", all.reads, "--quick", ref.genome,
-                            "&> log --mirapath", path.to.mira)
+      
+      if(combine == "bbmap"){
+        mitobim.call <- paste(path.to.MITObim, "-start 1 -end", num.iter, "-sample", sample.name,
+                              "-ref", reference.name, "-readpool", all.reads, "--quick", ref.genome,
+                              "--paired &> log --mirapath", path.to.mira)        
+      }
+      else if(combine == "cat"){
+        mitobim.call <- paste(path.to.MITObim, "-start 1 -end", num.iter, "-sample", sample.name,
+                              "-ref", reference.name, "-readpool", all.reads, "--quick", ref.genome,
+                              "&> log --mirapath", path.to.mira)       
+      }
       
       final.call <- paste(change.to.directory, ";", mitobim.call)
       #writeLines(final.call, con=parallel.script, sep="\n",)
       write(final.call, file=paste0(curr.dir, "/", project.name, "_parallel.txt"), append=T, sep="\n")
-      
+      print(final.call)
+
       # set up the process to do 8 at a time, then wait
         # if(p%%ncores==0){
         #   writeLines("wait", shell.script)
@@ -137,7 +180,7 @@ mitoAssemble <- function(num.iter, reference.name, project.name, write.shell=FAL
     }
     #system(paste("mv", paste0(dirname(getwd()), "/", project.name, "_mtGenomes"), paste0(curr.dir, "/", project.name, "_mtGenomes")))
     
-    close(parallel.script)
+    #close(parallel.script)
     cat("Your shell script for running MITObim in parallel is written to:\n", 
         paste0(curr.dir, "/", project.name, "_parallel.txt"),"\n")
     cat("Execute the command in parallel by copy/paste to your terminal:\n", 
@@ -152,17 +195,24 @@ mitoAssemble <- function(num.iter, reference.name, project.name, write.shell=FAL
 # you'll need to use 'mitoCollate' to pull the assemblies together
 mitoCollate <- function(project.name) {
   # make a directory to catch the assembled mitoGenomes
-  genome.dir <- paste("mkdir", paste0(dirname(getwd()), "/", project.name, "_mtGenomes"))
+  genome.dir <- paste("mkdir", paste0(getwd(), "/", project.name, "_mtGenomes"))
   system(genome.dir)
   # get a list of all the final assemblies
   allfiles <- list.files(pattern="_noIUPAC.fasta", full.names=F, recursive=T)
   
+  all.names <- read.delim("Sample_Names.txt", header=F)
+  
+  assembled.names <- NULL
   for (k in 1:length(allfiles)){
+
     # grab the sample name
     int.name <- strsplit(allfiles[k], "/")
     sample.name <- int.name[[1]][1]
+    # append it to the list of assembled mtGenome names
+    assembled.names <- append(assembled.names, sample.name)
     # get the current directory name
     current.directory <- paste0(getwd(), "/", int.name[[1]][1], "/", int.name[[1]][2])
+    #current.directory <- dirname(allfiles[k])
     
     # rename the best assembly
     new.name <- paste0("'1s/.*/" ,">", sample.name, "_Assembly", "/g", "'")
@@ -177,11 +227,13 @@ mitoCollate <- function(project.name) {
     
     # pull the best mitoGenome and drop it in a folder with the others
     copy.best <- paste("find", current.directory, "-name", "'*_noIUPAC.fasta\'", "-exec cp '{}'",
-                       paste0(dirname(getwd()), "/", project.name, "_mtGenomes"), "';'")
+                       paste0(getwd(), "/", project.name, "_mtGenomes"), "';'")
     system(copy.best)
     
-    cat("finished assembling sample", k, "of", length(allfiles),":", sample.name,"\n") #keep track of what tree/loop# we're on
+    cat("copying sample", k, "of", length(allfiles),":", sample.name,"\n")
   }
+  unassembled.names <- setdiff(all.names$V1, assembled.names)
+  write(paste("no mitochondrial data assembled for sample:", unassembled.names), file="Unsampled_Names.txt", append=T, sep="\n")
 }
 
 # you'll need MUSCLE dropped into the working directory
@@ -243,7 +295,7 @@ mitoAlign <- function(project.name, aligner=c("MAFFT", "MUSCLE"), reference.name
 # check each taxon to see if it's doodoo
 mitoCheck <- function(project.name, alignment, count.gaps=TRUE, missing.threshold=NULL){
   library(ape); library(seqinr)
-  sub.dir <- paste0(getwd(),"/",project.name,"/")
+  sub.dir <- paste0(getwd(),"/",project.name, "_mtGenomes","/")
   
   # I'm going to use the quick and dirty approach of getting a percentage of missing data
   # to identify taxa we might want to remove
@@ -273,6 +325,7 @@ mitoCheck <- function(project.name, alignment, count.gaps=TRUE, missing.threshol
 mitoChop <- function(project.name, alignment, character.sets){
   library(ape); library(seqinr)
   sub.dir <- paste0(getwd(),"/",project.name,"/")
+  #sub.dir <- paste0(getwd(),"/")
   
   # make a directory for the split up mitochondrial loci
   alignment.folder <- paste0(sub.dir, project.name, "_mitoLoci")

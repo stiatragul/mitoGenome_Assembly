@@ -6,10 +6,11 @@ setwd("~/Desktop/AHE_Hylid/Hylidae")
 
 # Assemble the mitochondrial genomes
 mitoAssemble(num.iter = 100,
-             reference.name = "Dryophytes",
+             reference.name = "i11037_Cyclorana",
              project.name = "Hylidae",
              write.shell = T,
-             ncores = 14)
+             ncores = 14,
+             combine = "bbmap")
 
 # If you used the parallel version, collect the
 # assembled mitogenomes
@@ -18,7 +19,7 @@ mitoCollate(project.name = "Hylidae")
 # Align the mitogenomes
 mitoAlign(project.name = "Hylidae",
           aligner = "MAFFT",
-          reference.name = "Dryophytes")
+          reference.name = "i11037_Cyclorana")
 
 # Check assembly/alignment completeness
 mitoCheck(project.name = "Hylidae",
@@ -27,6 +28,6 @@ mitoCheck(project.name = "Hylidae",
           missing.threshold = 0.7)
 
 # Chop the mitogenomes into specified fragments
-mitoChop(project.name = "Hylidae",
-         alignment = "Hylidae_RefAligned_Assemblies_Reduced",
-         character.sets = "mitoGenome_Annotations_Example.csv")
+mitoChop(project.name = "Hylidae_mtGenomes",
+         alignment = "Hylidae_RefAligned_Assemblies_Cyclorana_Dryophytes",
+         character.sets = "Dryophytes_mtGenome_Annotations.csv")
