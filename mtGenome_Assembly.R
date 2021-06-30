@@ -66,11 +66,13 @@ mitoAssemble <- function(num.iter, reference.name, project.name, write.shell=FAL
       ref.genome <- paste0(current.directory, "/", reference.name, "_mtGenome.fasta")
       
       # create the call to MITObim pipeline
-      path.to.MITObim <- paste0(dirname(getwd()), "/MITObim.pl")
+      #path.to.MITObim <- paste0(dirname(getwd()), "/MITObim.pl")
+      path.to.MITObim <- paste0(getwd(), "/MITObim.pl")
       
       # create the call to mira
-      int.path <- dirname(getwd())
-      path.to.mira <- paste0(int.path, "/mira_4.0.2_darwin13.1.0_x86_64_static/bin")
+      #int.path <- dirname(getwd())
+      #path.to.mira <- paste0(int.path, "/mira_4.0.2_darwin13.1.0_x86_64_static/bin")
+      path.to.mira <- paste0(getwd(), "/mira_4.0.2_darwin13.1.0_x86_64_static/bin")
       
       # 
       int.name <- strsplit(current.directory, "/")
@@ -133,11 +135,13 @@ mitoAssemble <- function(num.iter, reference.name, project.name, write.shell=FAL
       ref.genome <- paste0(current.directory, "/", reference.name, "_mtGenome.fasta")
       
       # create the call to MITObim pipeline
-      path.to.MITObim <- paste0(dirname(getwd()), "/MITObim.pl")
+      #path.to.MITObim <- paste0(dirname(getwd()), "/MITObim.pl")
+      path.to.MITObim <- paste0(getwd(), "/MITObim.pl")
       
       # create the call to mira
-      int.path <- dirname(getwd())
-      path.to.mira <- paste0(int.path, "/mira_4.0.2_darwin13.1.0_x86_64_static/bin")
+      #int.path <- dirname(getwd())
+      #path.to.mira <- paste0(int.path, "/mira_4.0.2_darwin13.1.0_x86_64_static/bin")
+      path.to.mira <- paste0(getwd(), "/mira_4.0.2_darwin13.1.0_x86_64_static/bin")
       
       # 
       int.name <- strsplit(current.directory, "/")
