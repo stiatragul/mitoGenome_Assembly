@@ -81,12 +81,12 @@ mitoAssemble <- function(num.iter, reference.name, project.name, write.shell=FAL
       if(combine == "bbmap"){
         mitobim.call <- paste(path.to.MITObim, "-start 1 -end", num.iter, "-sample", sample.name,
                               "-ref", reference.name, "-readpool", all.reads, "--quick", ref.genome,
-                              "--paired &> log --mirapath", path.to.mira)        
+                              "--paired --clean &> log --mirapath", path.to.mira)        
       }
       else if(combine == "cat"){
         mitobim.call <- paste(path.to.MITObim, "-start 1 -end", num.iter, "-sample", sample.name,
                               "-ref", reference.name, "-readpool", all.reads, "--quick", ref.genome,
-                              "&> log --mirapath", path.to.mira)       
+                              "--clean &> log --mirapath", path.to.mira)       
       }
 
       
@@ -150,18 +150,18 @@ mitoAssemble <- function(num.iter, reference.name, project.name, write.shell=FAL
       if(combine == "bbmap"){
         mitobim.call <- paste(path.to.MITObim, "-start 1 -end", num.iter, "-sample", sample.name,
                               "-ref", reference.name, "-readpool", all.reads, "--quick", ref.genome,
-                              "--paired &> log --mirapath", path.to.mira)        
+                              "--paired --clean &> log --mirapath", path.to.mira)        
       }
       else if(combine == "cat"){
         mitobim.call <- paste(path.to.MITObim, "-start 1 -end", num.iter, "-sample", sample.name,
                               "-ref", reference.name, "-readpool", all.reads, "--quick", ref.genome,
-                              "&> log --mirapath", path.to.mira)       
+                              "--clean &> log --mirapath", path.to.mira)       
       }
       
       final.call <- paste(change.to.directory, ";", mitobim.call)
       #writeLines(final.call, con=parallel.script, sep="\n",)
       write(final.call, file=paste0(curr.dir, "/", project.name, "_parallel.txt"), append=T, sep="\n")
-      print(final.call)
+      #print(final.call)
 
       # set up the process to do 8 at a time, then wait
         # if(p%%ncores==0){
@@ -188,7 +188,7 @@ mitoAssemble <- function(num.iter, reference.name, project.name, write.shell=FAL
     cat("Your shell script for running MITObim in parallel is written to:\n", 
         paste0(curr.dir, "/", project.name, "_parallel.txt"),"\n")
     cat("Execute the command in parallel by copy/paste to your terminal:\n", 
-        paste(paste0("parallel ", "-j ", ncores, " ::::"), paste0(curr.dir, "/", project.name, "_parallel.txt")))
+        paste(paste0("parallel ", "-j ", ncores, " --bar ::::"), paste0(curr.dir, "/", project.name, "_parallel.txt")))
     #cat("Assembly(s) completed and saved to:", paste0(curr.dir, "/", project.name, "_mtGenomes"))
   }
 }

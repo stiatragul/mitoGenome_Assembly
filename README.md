@@ -89,7 +89,7 @@ mitoAssemble(num.iter, reference.name, project.name,
 * *project.name* is what you'd like the generated directories to be called (where the assemblies are stored)
 * *write.shell* if you'd like the function to write a shell script so that you can run MITObim in parallel
 * *ncores* designate the number of cores to use if you want to run in parallel
-* *combine* tells the function whether to use *cat* to combine raw read files, or *bbmap to create an interleaved file that can be used with the '--paired' flag in MITObim
+* *combine* tells the function whether to use *cat* to combine raw read files, or *bbmap* to create an interleaved file that can be used with the '--paired' flag in MITObim
 
 
 If run sequentially (*write.shell = FALSE*), the function *mitoAssemble* will spit out all the assemblies to a new directory, and tell you where it is:
@@ -103,7 +103,7 @@ If run in parallel (*write.shell = TRUE*), the function will spit out a shell sc
 Your shell script for running MITObim in parallel is written to:
 /Users/Ian/MITObim/Assa/Assa_parallel.txt
 Execute the command in parallel by copy/paste to your terminal:
-parallel -j 14 :::: /Users/Ian/MITObim/Assa/Assa_parallel.txt
+parallel -j 14 --bar :::: /Users/Ian/MITObim/Assa/Assa_parallel.txt
 ```
 This requires you have *parallel* installed to your machine, which you can easily do with *$ brew install parallel*, assuming you have *homebrew* installed (highly recommended).
 
