@@ -328,7 +328,7 @@ mitoCheck <- function(project.name, alignment, count.gaps=TRUE, missing.threshol
 # chop the mitoGenomes up into pieces
 mitoChop <- function(project.name, alignment, character.sets){
   library(ape); library(seqinr)
-  sub.dir <- paste0(getwd(),"/",project.name,"/")
+  sub.dir <- paste0(getwd(),"/",project.name,"_mtGenomes/")
   #sub.dir <- paste0(getwd(),"/")
   
   # make a directory for the split up mitochondrial loci
