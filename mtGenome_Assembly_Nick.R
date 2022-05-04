@@ -5,8 +5,7 @@
 mitoAssemble <- function(num.iter, reference.name, project.name, write.shell=FALSE, ncores=NULL,
                          combine = c("cat", "bbmap")) {
   curr.dir <- getwd()
-  int.parent <- str_split(getwd(), "/")[[1]]
-  parent.dir <- paste(int.parent[1:(length(int.parent)-1)], collapse="/") 
+  parent.dir <- dirname(curr.dir) 
   
   # copy the reference mtGenome to all the subdirectories
   copy.reference <- paste("cd", curr.dir, ";",
@@ -245,6 +244,10 @@ mitoCollate <- function(project.name) {
 # you'll need MUSCLE dropped into the working directory
 mitoAlign <- function(project.name, aligner=c("MAFFT", "MUSCLE"), reference.name=NULL) {
   curr.dir <- getwd()
+
+  # establish the parent directory name
+  parent.dir <- dirname(curr.dir)
+
   
   # make a directory for the final mitoGenomes
   alignment.folder <- paste0(curr.dir, "/", project.name, "_mtGenomes")
@@ -263,7 +266,7 @@ mitoAlign <- function(project.name, aligner=c("MAFFT", "MUSCLE"), reference.name
   #### if you're on a PC or Linux machine, you'll have to adjust the paths to MUSCLE or MAFFT, sorry!
   if(aligner=="MUSCLE"){
     if(is.null(reference.name)){
-      align.em <- paste(paste0(dirname(getwd()), "/muscle3.8.31_i86darwin64"),
+      align.em <- paste(paste0(dirname(curr.dir), "/muscle3.8.31_i86darwin64"),
                         "-in", paste0(alignment.folder, "/", project.name, "_Assembly_Alignment.fasta"),
                         "-out", paste0(alignment.folder, "/", project.name, "_Aligned_Assemblies.fasta"))
     } else if(!is.null(reference.name)){stop("I'm dumb and don't know how to align to a reference sequence with MUSCLE...yet. Maybe try MAFFT until I've fixed this.")}
@@ -274,13 +277,13 @@ mitoAlign <- function(project.name, aligner=c("MAFFT", "MUSCLE"), reference.name
   
   else if(aligner=="MAFFT"){
     if(is.null(reference.name)){
-      align.em <- paste(paste0(dirname(getwd()), "/mafft-mac/mafft.bat"),
+      align.em <- paste("mafft",
                         #"/Applications/mafft-mac/mafft.bat",
                         paste0(alignment.folder, "/", project.name, "_Assembly_Alignment.fasta"),
                         ">", paste0(alignment.folder, "/", project.name, "_Aligned_Assemblies.fasta"))
     } else if(!is.null(reference.name)){
       ref.name <- paste0(reference.name, "_mtGenome.fasta")
-      align.em <- paste(paste0(dirname(getwd()), "/mafft-mac/mafft.bat"), "--addfull",
+      align.em <- paste("mafft", "--addfull",
                         #"/Applications/mafft-mac/mafft.bat", "--addfull",
                         paste0(alignment.folder, "/", project.name, "_Assembly_Alignment.fasta"),
                         "--keeplength", ref.name, 
@@ -330,7 +333,7 @@ mitoCheck <- function(project.name, alignment, count.gaps=TRUE, missing.threshol
 # chop the mitoGenomes up into pieces
 mitoChop <- function(project.name, alignment, character.sets){
   library(ape); library(seqinr)
-  sub.dir <- paste0(getwd(),"/",project.name,"/")
+  sub.dir <- paste0(getwd(),"/",project.name,"_mtGenomes/")
   #sub.dir <- paste0(getwd(),"/")
   
   # make a directory for the split up mitochondrial loci
