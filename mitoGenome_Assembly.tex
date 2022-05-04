@@ -82,7 +82,7 @@
 \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
 \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\usepackage{graphicx}
+\usepackage{graphicx,grffile}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
 \def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
@@ -103,7 +103,7 @@
 
 \title{mitoGenome Assembly}
 \author{Ian G. Brennan}
-\date{14 January 2020}
+\date{4 May 2022}
 
 \begin{document}
 \maketitle
@@ -201,22 +201,22 @@ Here's a quick schematic of what the structure should look like:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\ExtensionTok{/PATH\_TO\_PARENT\_DIRECTORY/mtGenomes}
-\KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ MITObim.pl}
-\KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ mira\_4.0.2\_darwin13.1.0\_x86\_64\_static}
-\KeywordTok{|}   \KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ bin (et al.)}
-\KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ muscle3.8.31\_i86darwin64}
-\KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ bbmap}
-\KeywordTok{|}   \KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ reformat.sh}
-\KeywordTok{|}   \KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ et al.}
-\KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ Frogs}
-    \KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ [taxon]\_mtGenome.fasta (reference genome)}
-    \KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ Taxon1}
-    \KeywordTok{|}   \KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ Taxon1\_R1.fastq.gz}
-    \KeywordTok{|}   \KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ Taxon1\_R2.fastq.gz}
-    \KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ Taxon2}
-        \KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ Taxon2\_R1.fastq.gz}
-        \KeywordTok{|}\ExtensionTok{{-}{-}}\NormalTok{ Taxon2\_R2.fastq.gz}
+\ExtensionTok{/PATH_TO_PARENT_DIRECTORY/mtGenomes}
+\KeywordTok{|}\ExtensionTok{--}\NormalTok{ MITObim.pl}
+\KeywordTok{|}\ExtensionTok{--}\NormalTok{ mira_4.0.2_darwin13.1.0_x86_64_static}
+\KeywordTok{|}   \KeywordTok{|}\ExtensionTok{--}\NormalTok{ bin (et al.)}
+\KeywordTok{|}\ExtensionTok{--}\NormalTok{ muscle3.8.31_i86darwin64}
+\KeywordTok{|}\ExtensionTok{--}\NormalTok{ bbmap}
+\KeywordTok{|}   \KeywordTok{|}\ExtensionTok{--}\NormalTok{ reformat.sh}
+\KeywordTok{|}   \KeywordTok{|}\ExtensionTok{--}\NormalTok{ et al.}
+\KeywordTok{|}\ExtensionTok{--}\NormalTok{ Frogs}
+    \KeywordTok{|}\ExtensionTok{--}\NormalTok{ [taxon]_mtGenome.fasta (reference genome)}
+    \KeywordTok{|}\ExtensionTok{--}\NormalTok{ Taxon1}
+    \KeywordTok{|}   \KeywordTok{|}\ExtensionTok{--}\NormalTok{ Taxon1_R1.fastq.gz}
+    \KeywordTok{|}   \KeywordTok{|}\ExtensionTok{--}\NormalTok{ Taxon1_R2.fastq.gz}
+    \KeywordTok{|}\ExtensionTok{--}\NormalTok{ Taxon2}
+        \KeywordTok{|}\ExtensionTok{--}\NormalTok{ Taxon2_R1.fastq.gz}
+        \KeywordTok{|}\ExtensionTok{--}\NormalTok{ Taxon2_R2.fastq.gz}
 \end{Highlighting}
 \end{Shaded}
 
@@ -229,7 +229,7 @@ Open a new R script, and source the functions we'll need
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{source}\NormalTok{(}\StringTok{"/PATH\_TO\_CODE/mtGenome\_Assembly.R"}\NormalTok{)}
+\KeywordTok{source}\NormalTok{(}\StringTok{"/PATH_TO_CODE/mtGenome_Assembly.R"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -239,7 +239,7 @@ sample, and your reference mitogenome.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{setwd}\NormalTok{(}\StringTok{"/PATH\_TO\_DIR/mtGenomes/Frogs"}\NormalTok{)}
+\KeywordTok{setwd}\NormalTok{(}\StringTok{"/PATH_TO_DIR/mtGenomes/Frogs"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -307,7 +307,7 @@ and tell you where it is:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{Assembly}\NormalTok{(s) completed and saved to}\OperatorTok{:}\StringTok{ }\ErrorTok{/}\NormalTok{Users}\OperatorTok{/}\NormalTok{Ian}\OperatorTok{/}\NormalTok{MITObim}\OperatorTok{/}\NormalTok{Assa}\OperatorTok{/}\NormalTok{Assa\_mtGenomes}
+\KeywordTok{Assembly}\NormalTok{(s) completed and saved to}\OperatorTok{:}\StringTok{ }\ErrorTok{/}\NormalTok{Users}\OperatorTok{/}\NormalTok{Ian}\OperatorTok{/}\NormalTok{MITObim}\OperatorTok{/}\NormalTok{Assa}\OperatorTok{/}\NormalTok{Assa_mtGenomes}
 \end{Highlighting}
 \end{Shaded}
 
@@ -320,9 +320,9 @@ suggested), and provide instructions:
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{Your shell script }\ControlFlowTok{for}\NormalTok{ running MITObim }\ControlFlowTok{in}\NormalTok{ parallel is written to}\OperatorTok{:}
-\ErrorTok{/}\NormalTok{Users}\OperatorTok{/}\NormalTok{Ian}\OperatorTok{/}\NormalTok{MITObim}\OperatorTok{/}\NormalTok{Assa}\OperatorTok{/}\NormalTok{Assa\_parallel.txt}
+\ErrorTok{/}\NormalTok{Users}\OperatorTok{/}\NormalTok{Ian}\OperatorTok{/}\NormalTok{MITObim}\OperatorTok{/}\NormalTok{Assa}\OperatorTok{/}\NormalTok{Assa_parallel.txt}
 \NormalTok{Execute the command }\ControlFlowTok{in}\NormalTok{ parallel by copy}\OperatorTok{/}\NormalTok{paste to your terminal}\OperatorTok{:}
-\NormalTok{parallel }\OperatorTok{{-}}\NormalTok{j }\DecValTok{14} \OperatorTok{:::}\ErrorTok{:}\StringTok{ }\ErrorTok{/}\NormalTok{Users}\OperatorTok{/}\NormalTok{Ian}\OperatorTok{/}\NormalTok{MITObim}\OperatorTok{/}\NormalTok{Assa}\OperatorTok{/}\NormalTok{Assa\_parallel.txt}
+\NormalTok{parallel }\OperatorTok{-}\NormalTok{j }\DecValTok{14} \OperatorTok{:::}\ErrorTok{:}\StringTok{ }\ErrorTok{/}\NormalTok{Users}\OperatorTok{/}\NormalTok{Ian}\OperatorTok{/}\NormalTok{MITObim}\OperatorTok{/}\NormalTok{Assa}\OperatorTok{/}\NormalTok{Assa_parallel.txt}
 \end{Highlighting}
 \end{Shaded}
 
@@ -400,7 +400,7 @@ your new directory, and tell you where it is:
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{your alignment of mtGenome assemblies is called}\OperatorTok{:}
-\StringTok{  }\ErrorTok{/}\NormalTok{Users}\OperatorTok{/}\NormalTok{Ian}\OperatorTok{/}\NormalTok{MITObim}\OperatorTok{/}\NormalTok{Assa}\OperatorTok{/}\NormalTok{Assa\_mtGenomes}\OperatorTok{/}\NormalTok{Assa\_Aligned\_Assemblies.fasta}
+\StringTok{  }\ErrorTok{/}\NormalTok{Users}\OperatorTok{/}\NormalTok{Ian}\OperatorTok{/}\NormalTok{MITObim}\OperatorTok{/}\NormalTok{Assa}\OperatorTok{/}\NormalTok{Assa_mtGenomes}\OperatorTok{/}\NormalTok{Assa_Aligned_Assemblies.fasta}
 \end{Highlighting}
 \end{Shaded}
 
@@ -479,7 +479,7 @@ produce a new alignment and tell you the name:
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{your reduced alignment is now called}\OperatorTok{:}
-\ErrorTok{/}\NormalTok{Users}\OperatorTok{/}\NormalTok{Ian}\OperatorTok{/}\NormalTok{MITObim}\OperatorTok{/}\NormalTok{Assa}\OperatorTok{/}\NormalTok{Assa\_mtGenomes}\OperatorTok{/}\NormalTok{Assa\_Aligned\_Assemblies\_Reduced.fasta}
+\ErrorTok{/}\NormalTok{Users}\OperatorTok{/}\NormalTok{Ian}\OperatorTok{/}\NormalTok{MITObim}\OperatorTok{/}\NormalTok{Assa}\OperatorTok{/}\NormalTok{Assa_mtGenomes}\OperatorTok{/}\NormalTok{Assa_Aligned_Assemblies_Reduced.fasta}
 \end{Highlighting}
 \end{Shaded}
 
@@ -510,7 +510,7 @@ The function will kick out the alignment for each mitochondrial locus
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{your separated mitochondrial loci alignments are }\ControlFlowTok{in}\NormalTok{ a folder called}\OperatorTok{::}
-\StringTok{ }\ErrorTok{/}\NormalTok{Users}\OperatorTok{/}\NormalTok{Ian}\OperatorTok{/}\NormalTok{MITObim}\OperatorTok{/}\NormalTok{Assa}\OperatorTok{/}\NormalTok{Assa\_mtGenomes}\OperatorTok{/}\NormalTok{Assa\_mitoLoci}
+\StringTok{ }\ErrorTok{/}\NormalTok{Users}\OperatorTok{/}\NormalTok{Ian}\OperatorTok{/}\NormalTok{MITObim}\OperatorTok{/}\NormalTok{Assa}\OperatorTok{/}\NormalTok{Assa_mtGenomes}\OperatorTok{/}\NormalTok{Assa_mitoLoci}
 \end{Highlighting}
 \end{Shaded}
 
@@ -538,6 +538,43 @@ where to cut it up
   (\emph{Maximum}) for each locus. An example is included in the
   respository (``mitoGenome\_Annotations\_Example.csv'').
 \end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\pagebreak
+
+\hypertarget{running-on-linux-remotely}{%
+\section{Running on Linux Remotely}\label{running-on-linux-remotely}}
+
+Instead of running these scripts on a local machine you may want to run
+them on a server with more memory elsewhere. If you can install and run
+\href{https://www.rstudio.com/products/rstudio/download-server/}{RStudio
+Server} on your remote machine, you can log-in and run this workflow
+using the same file structure and instructions as above.
+
+I've included the MIRA linux version in this repository but you might
+find you need to download and install it yourself. Make sure to
+establish the directory structure as outlined on page 3. Once you open
+an RStudio Server window, you'll need to source the functions we'll
+need.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{source}\NormalTok{(}\StringTok{"/PATH_TO_CODE/mtGenome_Assembly_Nick.R"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Then set your working directory to the project-specific directory (I've
+called this directory `Frogs'). This holds a subdirectory for each
+sample, and your reference mitogenome.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{setwd}\NormalTok{(}\StringTok{"/PATH_TO_DIR/mtGenomes/Frogs"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+From there, just follow the rest of the instructions!
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
